@@ -18,6 +18,7 @@ public class ClassDiagram {
 
     protected Map<String,String> inheritance;
     protected Map<String,String> implementing;
+    protected Map<String, Integer> numberOfMethods;
     protected Map<String,Set<String>> associations;
     //include classes in the JDK etc? Can produce crowded diagrams.
     protected boolean ignoreLibraryClasses;
@@ -47,6 +48,7 @@ public class ClassDiagram {
         associations = new HashMap<String, Set<String>>();
         allClassNames = new HashSet<String>();
         includedClasses = new HashSet<String>();
+        numberOfMethods = new HashMap<String, Integer>();
 
         for(Class cl : classes){
             allClassNames.add(getClassName(cl));
@@ -60,6 +62,11 @@ public class ClassDiagram {
         for(Class cl : classes){
             extractInheritanceRelationships(cl);
             extractAssociationRelationships(cl);
+        }
+        for(Class cl: classes){
+            int num = numOfMethod(cl);
+            String name = getClassName(cl);
+            numberOfMethods.put(name,num);
         }
     }
 
@@ -100,6 +107,15 @@ public class ClassDiagram {
         associations.put(getClassName(cl),fields);
     }
 
+    /**
+     * For a class cl, identify the number of methods declared whithin it. */
+    protected int numOfMethod(Class cl){
+        int numOfMethod= 0;
+        if(cl.getDeclaredMethods() != null){
+            numOfMethod =+ cl.getDeclaredMethods().length;
+        }
+        return numOfMethod;
+    }
     protected boolean includeClass(Class cl){
         if(cl.getPackage()== null){
             if(!signaturePrefix.isEmpty())
@@ -128,14 +144,24 @@ public class ClassDiagram {
                 "graph [splines=ortho, rankdir=BT]\n\n");
 
         for(String className : includedClasses){
-            dotGraph.append("\""+className + "\"[shape = box];\n");
+            int number = numberOfMethods.get(className);
+            if (number>=30){
+                dotGraph.append("\""+className+ " " + number + "\"[shape = box][style = filled][fillcolor = yellow];\n");
+            }
+            else if (number<=30){
+                dotGraph.append("\""+className+ " " + number + "\"[shape = box];\n");
+            }
+
+
         }
 
         //Add inheritance relations
         for(String childClass : inheritance.keySet()){
             if(includedClasses.contains(childClass) && includedClasses.contains(inheritance.get(childClass))) {
-                String from = "\"" + childClass + "\"";
-                String to = "\"" + inheritance.get(childClass) + "\"";
+                int number = numberOfMethods.get(childClass);
+                int number2 = numberOfMethods.get(inheritance.get(childClass));
+                String from = "\"" + childClass +" "+number+ "\"";
+                String to = "\"" + inheritance.get(childClass)+" "+number2 + "\"";
                 dotGraph.append(from + " -> " + to + "[arrowhead = onormal];\n");
             }
         }
@@ -143,8 +169,10 @@ public class ClassDiagram {
         //Add implementing relations
         for(String childClass : implementing.keySet()){
             if(includedClasses.contains(childClass) && includedClasses.contains(implementing.get(childClass))) {
-                String from = "\"" + childClass + "\"";
-                String to = "\"" + implementing.get(childClass) + "\"";
+                int number = numberOfMethods.get(childClass);
+                int number2 = numberOfMethods.get(implementing.get(childClass));
+                String from = "\"" + childClass + " "+number+"\"";
+                String to = "\"" + implementing.get(childClass)+" "+number2 + "\"";
                 dotGraph.append(from + " -> " + to + "[arrowhead = curve];\n");
             }
         }
@@ -157,8 +185,10 @@ public class ClassDiagram {
             for(String field : fields) {
                 if(!includedClasses.contains(field))
                     continue;
-                String from = "\""+cls +"\"";
-                String to = "\""+field+"\"";
+                int number = numberOfMethods.get(cls);
+                int number2 = numberOfMethods.get(field);
+                String from = "\""+cls+ " " + number +"\"";
+                String to = "\""+field+" "+number2+"\"";
                 dotGraph.append(from + " -> " +to + "[arrowhead = diamond];\n");
             }
         }

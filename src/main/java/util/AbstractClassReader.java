@@ -26,6 +26,7 @@ public abstract class AbstractClassReader<T> {
             String fileName = files[i];
             String className = null;
 
+
             // we are only interested in .class files
             if (fileName.endsWith(".class")) {
                 // removes the .class extension
