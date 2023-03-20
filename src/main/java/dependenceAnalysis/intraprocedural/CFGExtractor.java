@@ -59,10 +59,12 @@ public class CFGExtractor {
 		
 		return g;
 	}
-	
+	// U:\jfreechart\target\jfreechart-2.0.0-SNAPSHOT-jar-with-dependencies.jar
+	//-cp $Classpath$;U:\Reengineering\commons-compress\target\commons-compress-1.23-SNAPSHOT-jar-with-dependencies.jar
+	//-cp $Classpath$;U:\jfreechart\target\jfreechart-2.0.0-SNAPSHOT-jar-with-dependencies.jar
 	public static void main(String[] args) throws IOException{
 		ClassNode cn = new ClassNode(Opcodes.ASM4);
-        InputStream in=CFGExtractor.class.getResourceAsStream("/org/apache/commons/compress/archivers/ArchiveInputStream.class");
+        InputStream in=CFGExtractor.class.getResourceAsStream("/org/jfree/chart/renderer/xy");
         ClassReader classReader=new ClassReader(in);
         classReader.accept(cn, 0);
         for(MethodNode mn : (List<MethodNode>)cn.methods){

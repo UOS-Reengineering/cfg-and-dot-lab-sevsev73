@@ -14,7 +14,7 @@ import org.objectweb.asm.tree.analysis.AnalyzerException;
  */
 
 //test commit
-    
+
 public abstract class Analysis {
 
     protected final Graph<AbstractInsnNode> controlFlowGraph;
