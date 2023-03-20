@@ -19,6 +19,7 @@ public class ClassDiagram {
     protected Map<String,String> inheritance;
     protected Map<String,String> implementing;
     protected Map<String, Integer> numberOfMethods;
+    protected Map<String, Integer> numDataMembers;
     protected Map<String,Set<String>> associations;
     //include classes in the JDK etc? Can produce crowded diagrams.
     protected boolean ignoreLibraryClasses;
@@ -68,6 +69,7 @@ public class ClassDiagram {
             String name = getClassName(cl);
             numberOfMethods.put(name,num);
         }
+
     }
 
 
@@ -107,6 +109,16 @@ public class ClassDiagram {
         associations.put(getClassName(cl),fields);
     }
 
+
+    /**
+     * For a class cl, identify the number of declared fields/data members whithin it. */
+    protected int dataMembers(Class cl){
+        int dataMembers = 0;
+        if(cl.getDeclaredMethods() != null){
+            dataMembers =+ cl.getDeclaredMethods().length;
+        }
+        return dataMembers;
+    }
     /**
      * For a class cl, identify the number of methods declared whithin it. */
     protected int numOfMethod(Class cl){
@@ -162,7 +174,7 @@ public class ClassDiagram {
                 int number2 = numberOfMethods.get(inheritance.get(childClass));
                 String from = "\"" + childClass +" "+number+ "\"";
                 String to = "\"" + inheritance.get(childClass)+" "+number2 + "\"";
-                dotGraph.append(from + " -> " + to + "[arrowhead = onormal];\n");
+                dotGraph.append(from + " -> " + to + "[arrowhead = onormal][color = red];\n");
             }
         }
 
@@ -173,7 +185,7 @@ public class ClassDiagram {
                 int number2 = numberOfMethods.get(implementing.get(childClass));
                 String from = "\"" + childClass + " "+number+"\"";
                 String to = "\"" + implementing.get(childClass)+" "+number2 + "\"";
-                dotGraph.append(from + " -> " + to + "[arrowhead = curve];\n");
+                dotGraph.append(from + " -> " + to + "[arrowhead = curve][color = blue];\n");
             }
         }
 
@@ -189,7 +201,7 @@ public class ClassDiagram {
                 int number2 = numberOfMethods.get(field);
                 String from = "\""+cls+ " " + number +"\"";
                 String to = "\""+field+" "+number2+"\"";
-                dotGraph.append(from + " -> " +to + "[arrowhead = diamond];\n");
+                dotGraph.append(from + " -> " +to + "[arrowhead = diamond][color = green];\n");
             }
         }
 

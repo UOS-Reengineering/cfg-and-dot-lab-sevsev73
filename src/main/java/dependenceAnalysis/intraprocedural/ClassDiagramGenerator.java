@@ -13,7 +13,7 @@ public class ClassDiagramGenerator {
         Boolean ignoreLibs = true;
         Boolean ignoreInnerClasses = false;
         String signaturePrefix = "org.jfree.chart.renderer";
-        String output = "classWithNumMethod.dot";
+        String output = "classWithDataMembers.dot";
 
         ClassDiagram cd = new ClassDiagram(root, ignoreLibs, ignoreInnerClasses, signaturePrefix);
         cd.writeDot(new File(output));
