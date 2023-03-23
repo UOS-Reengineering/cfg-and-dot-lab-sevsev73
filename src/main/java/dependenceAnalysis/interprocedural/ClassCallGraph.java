@@ -2,7 +2,9 @@ package dependenceAnalysis.interprocedural;
 
 import dependenceAnalysis.util.Graph;
 import dependenceAnalysis.util.Signature;
+import org.objectweb.asm.tree.ClassNode;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +26,10 @@ public class ClassCallGraph extends CallGraph{
     public Graph<String> getClassCG(){
         return classCG;
     }
+    public Set<String> getClassesNodes(){
+        Set<String> classNodes =  getClassCG().getNodes();
+        return classNodes;
+        }
 
     private void buildClassCallGraph() {
         classCG = new Graph<>();

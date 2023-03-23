@@ -3,12 +3,17 @@ package dependenceAnalysis.intraprocedural;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import dependenceAnalysis.interprocedural.CallGraph;
 import dependenceAnalysis.interprocedural.ClassCallGraph;
 import dependenceAnalysis.interprocedural.RestrictedCallGraph;
 import dependenceAnalysis.util.Signature;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodNode;
 
 public class CallGraphGenerator {
 
@@ -23,10 +28,9 @@ public class CallGraphGenerator {
         //Signature mostUsedMethod = findMostUsedMethod(cg);
         //System.out.println(cg);
         //System.out.println("The most called method is: "+mostUsedMethod);
-        ClassCallGraph ccg = new ClassCallGraph("U:/jfreechart/target/classes");
-        //this gets me the classes
-        System.out.println(ccg.getClassCG().getNodes().toString());
+        generateFanInFanOut(cg);
     }
+
 
     private static Signature findMostUsedMethod(CallGraph cg) throws IOException {
         int max = 0;
@@ -51,12 +55,30 @@ public class CallGraphGenerator {
         return maxSignature;
     }
 
-    private static void generateFanInFanOut(ClassCallGraph ccg) throws IOException {
+    private static void generateFanInFanOut(CallGraph cg) throws IOException {
         String toReturnIn = "Class, Fan-In\n";
         String toReturnOut = "Class, Fan-out\n";
+        Collection<ClassNode> classes = cg.getClassNodes().values();
+        for (ClassNode cn: classes){
+            int fan_in = cg.fanInClass(cn);
+            toReturnIn += cn.name+", "+ fan_in+"\n";
+        }
+        for (ClassNode cn: classes){
+            int fan_out = cg.fanOutClass(cn);
+            toReturnOut += cn.name+", "+fan_out+"\n";
+        }
+        BufferedWriter fw = new BufferedWriter(new FileWriter("classes_fan_in.csv"));
+        fw.write(toReturnIn);
+        fw.flush();
+        fw.close();
+        BufferedWriter fw2 = new BufferedWriter(new FileWriter("classes_fan_out.csv"));
+        fw2.write(toReturnOut);
+        fw2.flush();
+        fw2.close();
+
+        }
     }
 
 
 
 
-}

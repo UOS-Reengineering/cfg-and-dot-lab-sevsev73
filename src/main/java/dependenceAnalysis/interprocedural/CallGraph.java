@@ -73,6 +73,10 @@ public class CallGraph {
         }
     }
 
+    public Map<String, ClassNode> getClassNodes(){
+        return classNodes;
+    }
+
     /**
      * From the list classes, map each class to the set of sub-classes.
      * This is accomplished by, for every class X, identifying its super-class (ClassNode.superName),
@@ -195,8 +199,11 @@ public class CallGraph {
 
     public int incomingCalls(ClassNode cn, MethodNode mn){
         Signature sig = new Signature(cn.name,mn.name,mn.desc);
-        int numIncoming = callGraph.getPredecessors(sig).size();
-        return numIncoming;
+        //added this code to check if the method has been called at all before counting incoming edges
+        if (callGraph.getNodes().contains(sig)){
+            int numIncoming = callGraph.getPredecessors(sig).size();
+            return numIncoming; }
+        else return 0;
     }
 
     public int fanInClass(ClassNode cn){
@@ -209,8 +216,11 @@ public class CallGraph {
 
     public int outgoingCalls(ClassNode cn, MethodNode mn){
         Signature sig = new Signature(cn.name,mn.name,mn.desc);
-        int numOutgoing = callGraph.getSuccessors(sig).size();
-        return numOutgoing;
+        if (callGraph.getNodes().contains(sig)){
+            int numOutgoing = callGraph.getSuccessors(sig).size();
+            return numOutgoing;
+        }
+       else return 0;
     }
     public int fanOutClass(ClassNode cn){
         int fanOutTotal = 0;
